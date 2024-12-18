@@ -1,0 +1,66 @@
+import Image from "next/image";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Star } from "lucide-react";
+
+interface ProductCardProps {
+  product: {
+    id: number;
+    name: string;
+    description: string;
+    image: string;
+    price: number;
+    rating: string;
+    stock: number;
+    brand: {
+      id: number;
+      name: string;
+    };
+    category: {
+      id: number;
+      name: string;
+    };
+  };
+}
+
+export function ProductCard({ product }: ProductCardProps) {
+  return (
+    <Card className="w-[300px] overflow-hidden">
+      <CardHeader className="p-0">
+        <div className="relative h-[200px] w-full">
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            className="object-cover"
+          />
+        </div>
+      </CardHeader>
+      <CardContent className="p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="font-semibold text-lg">{product.name}</h3>
+          <Badge variant="secondary">${product.price}</Badge>
+        </div>
+        
+        <div className="flex items-center gap-2 mb-2">
+          <Badge variant="outline">{product.category.name}</Badge>
+          <Badge variant="outline">{product.brand.name}</Badge>
+        </div>
+
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
+          {product.description}
+        </p>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-1">
+            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+            <span className="text-sm">{product.rating}</span>
+          </div>
+          <span className="text-sm text-muted-foreground">
+            Stock: {product.stock}
+          </span>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
