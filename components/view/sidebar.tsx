@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 import {
   Sidebar,
@@ -88,12 +90,27 @@ const items = [
 ];
 
 export function AppSidebar() {
+  const router = useRouter();
+
   // Mock user data - replace with your actual user data
   const user = {
     name: "John Doe",
     email: "john@example.com",
     avatar: "https://github.com/shadcn.png" // example avatar URL
   }
+
+  const handleLogout = () => {
+    try {
+      // Remove specific cookies
+      Cookies.remove('token');
+      Cookies.remove('user');
+      // ... any other auth-related cookies
+      
+      router.push('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <Sidebar className="flex flex-col justify-between h-screen">
@@ -162,7 +179,11 @@ export function AppSidebar() {
                 <User className="h-4 w-4" />
                 Profile
               </Button>
-              <Button variant="ghost" className="flex items-center gap-2 justify-start text-red-500 hover:text-red-600 hover:bg-red-50">
+              <Button 
+                variant="ghost" 
+                className="flex items-center gap-2 justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
+                onClick={handleLogout}
+              >
                 <LogOut className="h-4 w-4" />
                 Logout
               </Button>

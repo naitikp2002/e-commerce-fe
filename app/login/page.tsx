@@ -6,42 +6,63 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import { useMutation } from "@tanstack/react-query"
+import Cookies from "js-cookie"
+
+interface LoginResponse {
+  message: string
+  token: string
+  user: {
+    id: number
+    name: string
+    email: string
+    role: string
+    // ... other user fields
+  }
+}
 
 export default function LoginPage() {
-    const router = useRouter()
+  const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
-  const [isLoading, setIsLoading] = useState(false)
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    try {
+  const loginMutation = useMutation({
+    mutationFn: async (credentials: { email: string; password: string }) => {
       const response = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify(credentials),
       })
 
       if (!response.ok) {
         throw new Error("Login failed")
       }
 
-      const data = await response.json()
-      console.log(data);
-      if(data?.user?.role === "admin"){
-        router.push("/admin")
-      }
+      return response.json() as Promise<LoginResponse>
+    },
+    onSuccess: (data) => {
+      Cookies.set("token", data.token, { expires: 7 })
+      Cookies.set("user", JSON.stringify(data.user), { expires: 7 })
+
       toast.success("Login successful!")
-    } catch (error) {
+      
+      if (data.user.role === "admin") {
+        router.push("/admin/products/list")
+      } else {
+        router.push("/")
+      }
+    },
+    onError: (error) => {
       toast.error("Invalid credentials")
       console.error("Login error:", error)
-    } finally {
-      setIsLoading(false)
-    }
+    },
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    loginMutation.mutate({ email, password })
   }
 
   return (

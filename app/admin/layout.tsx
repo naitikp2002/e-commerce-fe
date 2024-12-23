@@ -1,22 +1,25 @@
-// import Sidebar from "@/components/view/sidebar";
-// import { Grid2 as Grid } from "@mui/material";
+"use client"
 
-// export default function Layout({ children }: { children: React.ReactNode }) {
-//   return (
-//     // <div className="flex flex-row w-[100vw] h-full">
-//     <Grid container>
-//       <Grid size={2.5}>
-//         <Sidebar />
-//       </Grid >
-//       <Grid size={9.5}>{children}</Grid>
-//       </Grid>
-//     // </div>
-//   );
-// }
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/view/sidebar"
+import { getUser } from "@/lib/auth"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const user = getUser()
+
+  useEffect(() => {
+    if (!user || user.role !== "admin") {
+      router.push("/login")
+    }
+  }, [user, router])
+
+  // if (!user || user.role !== "admin") {
+  //   return <div>You are not authorized to access this page</div>;
+  // }
+
   return (
     <SidebarProvider>
       <AppSidebar />
