@@ -77,12 +77,12 @@ const items = [
     subItems: [
       {
         title: "Create Brand",
-        url: "/admin/brands/create",
+        url: "/admin/brand/create",
         icon: FolderPlus,
       },
       {
         title: "Brand List",
-        url: "/admin/brands/list",
+        url: "/admin/brand/list",
         icon: List,
       },
     ],

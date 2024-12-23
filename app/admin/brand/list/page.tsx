@@ -1,7 +1,5 @@
 "use client";
 import React from "react";
-import { useCategories } from "@/hooks/queries/use-categories";
-import { useDeleteCategory } from "@/hooks/queries/use-categories";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,18 +10,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
-import { Category } from "@/types/products";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Brand, Category } from "@/types/products";
 import SkeletonTable from "@/components/common/SkeletonTable";
+import { useBrands, useDeleteBrand } from "@/hooks/queries/use-brands";
 
-const CategoryListPage = () => {
+const BrandListPage = () => {
   const router = useRouter();
-  const { data: categories, isLoading, error } = useCategories();
-  const { mutate: deleteCategory } = useDeleteCategory();
+  const { data: brands, isLoading, error } = useBrands();
+  const { mutate: deleteBrand } = useDeleteBrand();
 
   const handleDelete = (id: number) => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
-      deleteCategory(id);
+    if (window.confirm("Are you sure you want to delete this brand?")) {
+      deleteBrand(id);
     }
   };
 
@@ -38,9 +36,9 @@ const CategoryListPage = () => {
   return (
     <div className="p-6 w-[75vw]">
       <div className="w-[100%] flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Categories</h1>
-        <Button onClick={() => router.push("/admin/category/create")}>
-          Add New Category
+        <h1 className="text-2xl font-bold">Brands</h1>
+        <Button onClick={() => router.push("/admin/brand/create")}>
+          Add New Brand
         </Button>
       </div>
 
@@ -53,23 +51,21 @@ const CategoryListPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {categories?.categories?.map((category: Category) => (
-            <TableRow key={category.id}>
-              <TableCell>{category.id}</TableCell>
-              <TableCell>{category.name}</TableCell>
+          {brands?.brands?.map((brand: Brand) => (
+            <TableRow key={brand.id}>
+              <TableCell>{brand.id}</TableCell>
+              <TableCell>{brand.name}</TableCell>
               <TableCell>
                 <Button
                   variant="outline"
                   className="mr-2"
-                  onClick={() =>
-                    router.push(`/admin/category/edit/${category.id}`)
-                  }
+                  onClick={() => router.push(`/admin/brand/edit/${brand.id}`)}
                 >
                   Edit
                 </Button>
                 <Button
                   variant="destructive"
-                  onClick={() => handleDelete(category.id)}
+                  onClick={() => handleDelete(brand.id)}
                 >
                   Delete
                 </Button>
@@ -82,4 +78,4 @@ const CategoryListPage = () => {
   );
 };
 
-export default CategoryListPage;
+export default BrandListPage;

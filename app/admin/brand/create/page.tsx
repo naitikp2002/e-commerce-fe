@@ -1,6 +1,6 @@
-'use client'
-import { useCreateCategory } from '@/hooks/queries/use-categories'
-import { Button } from '@/components/ui/button'
+"use client";
+import { useCreateBrand } from "@/hooks/queries/use-brands";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,46 +8,46 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 
 // Define the form schema
 const formSchema = z.object({
-  name: z.string().min(1, 'Category name is required'),
-})
+  name: z.string().min(1, "Brand name is required"),
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
-const CreateCategoryPage = () => {
-  const router = useRouter()
-  const { mutate: createCategory, isPending } = useCreateCategory()
+const CreateBrandPage = () => {
+  const router = useRouter();
+  const { mutate: createBrand, isPending } = useCreateBrand();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
+      name: "",
     },
-  })
+  });
 
   const onSubmit = (values: FormValues) => {
-    createCategory(values, {
+    createBrand(values, {
       onSuccess: () => {
-        router.push('/admin/category/list')
+        router.push("/admin/brand/list");
       },
       onError: (error) => {
-        console.error('Failed to create category:', error)
+        console.error("Failed to create brand:", error);
       },
-    })
-  }
+    });
+  };
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Create Category</h1>
+        <h1 className="text-2xl font-bold">Create Brand</h1>
       </div>
 
       <Form {...form}>
@@ -57,9 +57,9 @@ const CreateCategoryPage = () => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Category Name</FormLabel>
+                <FormLabel>Brand Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter category name" {...field} />
+                  <Input placeholder="Enter brand name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -68,12 +68,12 @@ const CreateCategoryPage = () => {
 
           <div className="flex gap-4">
             <Button type="submit" disabled={isPending}>
-              {isPending ? 'Creating...' : 'Create Category'}
+              {isPending ? "Creating..." : "Create Brand"}
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/admin/category/list')}
+              onClick={() => router.push("/admin/brand/list")}
             >
               Cancel
             </Button>
@@ -81,7 +81,7 @@ const CreateCategoryPage = () => {
         </form>
       </Form>
     </div>
-  )
-}
+  );
+};
 
-export default CreateCategoryPage
+export default CreateBrandPage;
