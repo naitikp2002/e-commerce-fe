@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiClient } from "@/lib/api-service"
-import { Product, ProductsResponse } from "@/types/products"
+import { Product, ProductsResponse, ProductDetailsResponse } from "@/types/products"
 import { getToken } from "@/lib/auth"
 
 
@@ -36,8 +36,17 @@ export const useProduct = (id: number) => {
   return useQuery({
     queryKey: productKeys.detail(id),
     queryFn: async () => {
-      const { data } = await apiClient.get(`/products/${id}`)
-      return data as Product
+      const token = getToken()
+      const response = await fetch(`http://localhost:8080/api/products/${id}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch product")
+      }
+      const data = await response.json()
+      return data as ProductDetailsResponse
     },
   })
 }
@@ -47,8 +56,14 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: async (newProduct: Omit<Product, "id">) => {
-      const { data } = await apiClient.post("/products/create", newProduct)
+    mutationFn: async (formData: FormData) => {
+      const token = getToken()
+      const { data } = await apiClient.post("/products/add", formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `${token}`,
+        },
+      })
       return data
     },
     onSuccess: () => {

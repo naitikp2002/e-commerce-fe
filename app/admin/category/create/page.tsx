@@ -45,8 +45,8 @@ const CreateCategoryPage = () => {
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 max-w-2xl">
+      <div className="flex justify-start items-center mb-6">
         <h1 className="text-2xl font-bold">Create Category</h1>
       </div>
 

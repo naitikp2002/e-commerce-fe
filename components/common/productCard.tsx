@@ -8,7 +8,7 @@ interface ProductCardProps {
     id: number;
     name: string;
     description: string;
-    image: string;
+    images: string[];
     price: number;
     rating: string;
     stock: number;
@@ -29,7 +29,7 @@ export function ProductCard({ product }: ProductCardProps) {
       <CardHeader className="p-0">
         <div className="relative h-[200px] w-full">
           <Image
-            src={product.image}
+            src={product.images?.[0]}
             alt={product.name}
             fill
             className="object-cover"

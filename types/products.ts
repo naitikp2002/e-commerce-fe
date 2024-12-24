@@ -17,7 +17,7 @@ export type Product = {
   name: string
   description: string
   price: number
-  image: string
+  images: string[]
   rating: string
   stock: number
   brand_id: number
@@ -33,3 +33,7 @@ export type ProductsResponse = {
   products: Product[]
 }
 
+export type ProductDetailsResponse = {
+  message: string
+  product: Product
+}

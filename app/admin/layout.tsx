@@ -25,7 +25,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AppSidebar />
       <main>
         <SidebarTrigger />
-        {children}
+        <div className="w-[80vw]">{children}</div>
       </main>
     </SidebarProvider>
   )

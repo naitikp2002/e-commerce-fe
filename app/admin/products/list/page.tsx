@@ -32,7 +32,13 @@ const ProductListPage = () => {
       </div>
       <div className="flex flex-wrap gap-3 p-3 items-center">
         {products?.products?.map((product: Product) => (
-          <ProductCard key={product.id} product={product} />
+          <div
+            key={product.id}
+            onClick={() => router.push(`/admin/products/${product.id}`)}
+            className="cursor-pointer"
+          >
+            <ProductCard product={product} />
+          </div>
         ))}
       </div>
     </div>
