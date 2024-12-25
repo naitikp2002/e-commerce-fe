@@ -6,10 +6,13 @@ import { Product } from "@/types/products";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { SkeletonCard } from "@/components/common/SkeletonCard";
+import { Pagination } from "@/components/ui/pagination";
+import { useState } from "react";
 
 const ProductListPage = () => {
   const router = useRouter();
-  const { data: products, isLoading, error } = useProducts();
+  const [page, setPage] = useState(1);
+  const { data, isLoading, error } = useProducts(page, 10);
 
   if (isLoading)
     return (
@@ -31,7 +34,7 @@ const ProductListPage = () => {
         </Button>
       </div>
       <div className="flex flex-wrap gap-3 p-3 items-center">
-        {products?.products?.map((product: Product) => (
+        {data?.products?.map((product: Product) => (
           <div
             key={product.id}
             onClick={() => router.push(`/admin/products/${product.id}`)}
@@ -40,6 +43,14 @@ const ProductListPage = () => {
             <ProductCard product={product} />
           </div>
         ))}
+      </div>
+      
+      <div className="mt-4 flex justify-center">
+        <Pagination
+          currentPage={page}
+          totalPages={data?.totalPages || 1}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
       </div>
     </div>
   );
