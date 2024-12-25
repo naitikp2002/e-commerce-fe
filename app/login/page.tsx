@@ -8,6 +8,8 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
 import Cookies from "js-cookie"
+import { useDispatch } from 'react-redux'
+import { setUser } from '../../store/features/userSlice'
 
 interface LoginResponse {
   message: string
@@ -25,6 +27,7 @@ export default function LoginPage() {
   const router = useRouter()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const dispatch = useDispatch()
 
   const loginMutation = useMutation({
     mutationFn: async (credentials: { email: string; password: string }) => {
@@ -43,6 +46,11 @@ export default function LoginPage() {
       return response.json() as Promise<LoginResponse>
     },
     onSuccess: (data) => {
+      dispatch(setUser({
+        user: data.user,
+        token: data.token
+      }))
+
       Cookies.set("token", data.token, { expires: 7 })
       Cookies.set("user", JSON.stringify(data.user), { expires: 7 })
 

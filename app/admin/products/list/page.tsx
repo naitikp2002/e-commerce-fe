@@ -7,12 +7,19 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { SkeletonCard } from "@/components/common/SkeletonCard";
 import { Pagination } from "@/components/ui/pagination";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../store/store";
 
 const ProductListPage = () => {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = useProducts(page, 10);
+
+  const user = useSelector((state: RootState) => state.user.user);
+  const token = useSelector((state: RootState) => state.user.token);
+  // console.log("Providers",user);
+  
 
   if (isLoading)
     return (

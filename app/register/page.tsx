@@ -24,6 +24,7 @@ const formSchema = z.object({
   email: z.string().email("Invalid email address"),
   mobile: z.string().min(10, "Mobile number must be at least 10 digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
+  image: z.instanceof(FileList).transform(list => list.item(0)),
 })
 
 // Add this type for the registration response
@@ -47,12 +48,21 @@ export default function RegisterPage() {
   // Replace the direct fetch with useMutation
   const { mutate: registerUser, isPending, isError } = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
+      const formData = new FormData()
+      formData.append('name', values.name)
+      formData.append('email', values.email)
+      formData.append('mobile', values.mobile)
+      formData.append('password', values.password)
+      if (values.image) {
+        formData.append('image', values.image)
+      }
+
       const response = await fetch("http://localhost:8080/api/auth/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
+        // headers: {
+        //   "Content-Type": "multipart/form-data",
+        // },
+        body: formData,
       })
       
       if (!response.ok) {
@@ -135,6 +145,30 @@ export default function RegisterPage() {
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter your password" type="password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="image"
+              render={({ field: { onChange, value, ...field } }) => (
+                <FormItem>
+                  <FormLabel>Profile Image</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={(e) => {
+                        const files = e.target.files
+                        if (files?.length) {
+                          onChange(files)
+                        }
+                      }}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

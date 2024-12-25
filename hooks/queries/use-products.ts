@@ -101,11 +101,17 @@ export const useDeleteProduct = () => {
 
   return useMutation({
     mutationFn: async (id: number) => {
-      await apiClient.delete(`/products/${id}`);
+      const token = getToken();
+      await apiClient.delete(`/products/${id}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
       return id;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: productKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
     },
   });
 };

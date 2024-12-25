@@ -8,6 +8,7 @@ import {
   ChevronDown,
   User,
   LogOut,
+  Edit,
 } from "lucide-react";
 import {
   Collapsible,
@@ -36,6 +37,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useEffect } from "react";
 
 // Updated menu items structure
 const items = [
@@ -52,6 +56,11 @@ const items = [
         title: "Product List",
         url: "/admin/products/list",
         icon: List,
+      },
+      {
+        title: "Modify Product",
+        url: "/admin/products/modify",
+        icon: Edit,
       },
     ],
   },
@@ -87,17 +96,30 @@ const items = [
       },
     ],
   },
+  {
+    title: "Users",
+    icon: User,
+    subItems: [
+      {
+        title: "User List",
+        url: "/admin/users/list",
+        icon: List,
+      },
+    ],
+  },
 ];
 
 export function AppSidebar() {
   const router = useRouter();
+  const user = useSelector((state: RootState) => state.user.user);
+  const token = useSelector((state: RootState) => state.user.token);
 
   // Mock user data - replace with your actual user data
-  const user = {
-    name: "John Doe",
-    email: "john@example.com",
-    avatar: "https://github.com/shadcn.png" // example avatar URL
-  }
+  // const user = {
+  //   name: "John Doe",
+  //   email: "john@example.com",
+  //   avatar: "https://github.com/shadcn.png" // example avatar URL
+  // }
 
   const handleLogout = () => {
     try {
@@ -161,32 +183,74 @@ export function AppSidebar() {
           <SheetTrigger asChild>
             <Button variant="ghost" className="w-full flex items-center justify-start gap-3 hover:bg-accent">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={user.avatar} />
-                <AvatarFallback>{user.name[0]}</AvatarFallback>
+                <AvatarImage src={user?.image} />
+                <AvatarFallback>{user?.name[0]}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col items-start text-sm">
-                <span className="font-medium">{user.name}</span>
-                <span className="text-xs text-muted-foreground">{user.email}</span>
+                <span className="font-medium">{user?.name}</span>
+                <span className="text-xs text-muted-foreground">{user?.email}</span>
               </div>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left">
+          <SheetContent side="left" className="w-[400px]">
             <SheetHeader>
               <SheetTitle>My Account</SheetTitle>
             </SheetHeader>
-            <div className="flex flex-col gap-4 mt-4">
-              <Button variant="ghost" className="flex items-center gap-2 justify-start">
-                <User className="h-4 w-4" />
-                Profile
-              </Button>
-              <Button 
-                variant="ghost" 
-                className="flex items-center gap-2 justify-start text-red-500 hover:text-red-600 hover:bg-red-50"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
+            <div className="flex flex-col gap-6 mt-6">
+              {/* Profile Info Section */}
+              <div className="flex flex-col items-center">
+                <Avatar className="h-24 w-24 mb-4">
+                  <AvatarImage src={user?.image} />
+                  <AvatarFallback>{user?.name[0]}</AvatarFallback>
+                </Avatar>
+                <div className="space-y-4 w-full">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Name</label>
+                    <div className="flex items-center justify-between bg-secondary/20 p-3 rounded-md">
+                      <span>{user?.name}</span>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Email</label>
+                    <div className="flex items-center justify-between bg-secondary/20 p-3 rounded-md">
+                      <span>{user?.email}</span>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-muted-foreground">Role</label>
+                    <div className="bg-secondary/20 p-3 rounded-md">
+                      <span className="capitalize">{user?.role || 'Admin'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Button 
+                  variant="outline" 
+                  className="flex items-center gap-2 justify-center"
+                  onClick={() => router.push('/admin/profile/edit')}
+                >
+                  <Edit className="h-4 w-4" />
+                  Edit Profile
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  className="flex items-center gap-2 justify-center text-red-500 hover:text-red-600 hover:bg-red-50"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Logout
+                </Button>
+              </div>
             </div>
           </SheetContent>
         </Sheet>
