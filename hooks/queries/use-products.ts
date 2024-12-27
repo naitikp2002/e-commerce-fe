@@ -17,16 +17,31 @@ export const productKeys = {
 };
 
 // Queries
-export const useProducts = (page = 1, limit = 10) => {
+export const useProducts = (
+  page = 1,
+  limit = 10,
+  categoryFilter: string | null = null,
+  brandFilter: string | null = null,
+  searchTerm: string = ""
+) => {
   return useQuery({
-    queryKey: ['products', page],
+    queryKey: ['products', page, categoryFilter, brandFilter, searchTerm],
     queryFn: async () => {
       const token = getToken();
-      const response = await fetch(`http://localhost:8080/api/products/all?page=${page}&limit=${limit}`,{
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+        ...(categoryFilter && { category_id: categoryFilter }),
+        ...(brandFilter && { brand_id: brandFilter }),
+        ...(searchTerm && { search: searchTerm }),
+      });
+
+      const response = await fetch(`http://localhost:8080/api/products/all?${queryParams.toString()}`, {
         headers: {
           Authorization: `${token}`,
         },
       });
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

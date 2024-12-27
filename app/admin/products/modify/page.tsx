@@ -13,33 +13,45 @@ import { Button } from "@/components/ui/button";
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
 import { useProducts } from "@/hooks/queries/use-products";
-import { Product } from "@/types/products";
+import { Brand, Category, Product } from "@/types/products";
 import { useRouter } from "next/navigation";
 import { useDeleteProduct } from "@/hooks/queries/use-products";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useCategories } from "@/hooks/queries/use-categories";
+import { useBrands } from "@/hooks/queries/use-brands";
+import { Input } from "@/components/ui/input";
 
 const ProductsPage = () => {
   const router = useRouter();
-  // Mock data - replace with your actual data fetching logic
   const [currentPage, setCurrentPage] = useState(1);
+  const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
+  const [brandFilter, setBrandFilter] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const productsPerPage = 10;
 
   const {
     data: products,
     isLoading,
     error,
-  } = useProducts(currentPage, productsPerPage);
+  } = useProducts(currentPage, productsPerPage, categoryFilter, brandFilter, searchTerm);
   const { mutate: deleteProduct, isSuccess } = useDeleteProduct();
+  const { data: categories, isLoading: isLoadingCategories, error: errorCategories } = useCategories();
+  const { data: brands, isLoading: isLoadingBrands, error: errorBrands } = useBrands();
 
   const totalPages = products?.totalPages;
 
   const handleView = (id: number) => {
-    // Add view logic
     router.push(`/admin/products/${id}`);
   };
 
   const handleEdit = (id: number) => {
-    // Add edit logic
     router.push(`/admin/products/${id}/edit`);
   };
 
@@ -60,6 +72,49 @@ const ProductsPage = () => {
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold mb-4">Products</h1>
+
+      <div className="flex gap-4 my-4">
+        <Input
+          type="text"
+          placeholder="Search by product details"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border p-2 rounded"
+        />
+
+        <Select value={categoryFilter || undefined} onValueChange={setCategoryFilter}>
+          <SelectTrigger>
+            <SelectValue placeholder="All Categories" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Categories</SelectItem>
+            {isLoadingCategories && <div>Loading categories...</div>}
+            {errorCategories && <div>Error loading categories</div>}
+            {categories?.categories?.map((category: Category) => (
+              <SelectItem key={category.id} value={category.id.toString()}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        <Select value={brandFilter || undefined} onValueChange={setBrandFilter}>
+          <SelectTrigger>
+            <SelectValue placeholder="All Brands" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Brands</SelectItem>
+            {isLoadingBrands && <div>Loading brands...</div>}
+            {errorBrands && <div>Error loading brands</div>}
+            {brands?.brands?.map((brand: Brand) => (
+              <SelectItem key={brand.id} value={brand.id.toString()}>
+                {brand.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
