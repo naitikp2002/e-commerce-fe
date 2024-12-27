@@ -118,6 +118,7 @@ const ProductsPage = () => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>No.</TableHead>
             <TableHead>Image</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Price</TableHead>
@@ -127,8 +128,9 @@ const ProductsPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {products?.products?.map((product: Product) => (
+          {products?.products?.map((product: Product, index: number) => (
             <TableRow key={product.id}>
+              <TableCell>{index + 1}</TableCell>
               <TableCell>
                 <div className="relative w-16 h-16">
                   <Image

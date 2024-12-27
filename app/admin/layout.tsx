@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/view/sidebar"
+import { AppSidebar } from "@/components/view/admin-sidebar"
 import { getUser } from "@/lib/auth"
 
 export default function Layout({ children }: { children: React.ReactNode }) {

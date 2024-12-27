@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { useMutation } from "@tanstack/react-query"
+import Link from "next/link"
 
 // Define the form validation schema
 const formSchema = z.object({
@@ -180,6 +181,9 @@ export default function RegisterPage() {
             </Button>
           </form>
         </Form>
+          <div className="flex justify-center mt-2">
+            <Link href="/login">Already have an account? Sign in</Link>
+          </div>
       </div>
     </div>
   )

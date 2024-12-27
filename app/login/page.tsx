@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query"
 import Cookies from "js-cookie"
 import { useDispatch } from 'react-redux'
 import { setUser } from '../../store/features/userSlice'
+import Link from "next/link"
 
 interface LoginResponse {
   message: string
@@ -112,6 +113,9 @@ export default function LoginPage() {
               Sign in
             </Button>
           </form>
+          <div className="flex justify-center mt-4">
+            <Link href="/register">Don&apos;t have an account? Sign up</Link>
+          </div>
         </CardContent>
       </Card>
     </div>
