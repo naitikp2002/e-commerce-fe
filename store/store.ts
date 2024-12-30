@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import userReducer from './features/userSlice'
+import filterReducer from './features/filterSlice'
 
 interface User {
   id: number;
@@ -12,6 +13,7 @@ interface User {
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    filter: filterReducer,
   },
 })
 

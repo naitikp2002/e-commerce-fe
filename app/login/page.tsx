@@ -60,7 +60,7 @@ export default function LoginPage() {
       if (data.user.role === "admin") {
         router.push("/admin/products/list")
       } else {
-        router.push("/")
+        router.push("/products/")
       }
     },
     onError: (error) => {

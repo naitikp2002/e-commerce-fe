@@ -17,6 +17,97 @@ export const productKeys = {
 };
 
 // Queries
+export const useUserProducts = (
+  page = 1,
+  limit = 10,
+  categoryFilter: number[] | null = null,
+  brandFilter: number[] | null = null,
+  priceRange: [number, number] | null = null,
+  ratings: number | null = null,
+  searchTerm: string = "",
+) => {
+  return useQuery({
+    queryKey: ['products', page, categoryFilter, brandFilter, searchTerm, priceRange, ratings],
+    queryFn: async () => {
+      const token = getToken();
+      const queryParams = new URLSearchParams();
+
+      queryParams.append('page', page.toString());
+      queryParams.append('limit', limit.toString());
+
+      if (categoryFilter && categoryFilter.length > 0) {
+        queryParams.append('category_id', categoryFilter.join(','));
+      }
+
+      if (brandFilter && brandFilter.length > 0) {
+        queryParams.append('brand_id', brandFilter.join(','));
+      }
+
+      if (priceRange) {
+        queryParams.append('price_range', priceRange.join(','));
+      }
+
+      if (ratings) {
+        queryParams.append('ratings', ratings.toString());
+      }
+
+      if (searchTerm) {
+        queryParams.append('search', searchTerm);
+      }
+
+      const response = await fetch(`http://localhost:8080/api/products/all?${queryParams.toString()}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    },
+  });
+};
+
+
+// export const useUserProducts = (
+//   page = 1,
+//   limit = 10,
+//   categoryFilter: number[] | null = null,
+//   brandFilter: number[] | null = null,
+//   priceRange: [number, number] | null = null,
+//   ratings: number | null = null,
+//   searchTerm: string = "",
+// ) => {
+//   return useQuery({
+//     queryKey: ['products', page, categoryFilter, brandFilter, searchTerm, priceRange, ratings],
+//     queryFn: async () => {
+//       const token = getToken();
+//       const queryParams = new URLSearchParams({
+//         page: page.toString(),
+//         limit: limit.toString(),
+//         ...(categoryFilter && { category_id: categoryFilter.join(',') }),
+//         ...(brandFilter && brandFilter.length > 0 && { brand_id: brandFilter.join(',') }),
+//         ...(searchTerm && { search: searchTerm }),
+//         ...(priceRange && { price_range: priceRange.join(',') }),
+//         ...(ratings && { ratings: ratings.toString() }),
+//       });
+
+//       const response = await fetch(`http://localhost:8080/api/products/all?${queryParams.toString()}`, {
+//         headers: {
+//           Authorization: `${token}`,
+//         },
+//       });
+
+//       if (!response.ok) {
+//         throw new Error('Network response was not ok');
+//       }
+//       return response.json();
+//     },
+//   });
+// };
+
+
 export const useProducts = (
   page = 1,
   limit = 10,

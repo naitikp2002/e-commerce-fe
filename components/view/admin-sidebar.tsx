@@ -114,13 +114,6 @@ export function AppSidebar() {
   const user = useSelector((state: RootState) => state.user.user);
   const token = useSelector((state: RootState) => state.user.token);
 
-  // Mock user data - replace with your actual user data
-  // const user = {
-  //   name: "John Doe",
-  //   email: "john@example.com",
-  //   avatar: "https://github.com/shadcn.png" // example avatar URL
-  // }
-
   const handleLogout = () => {
     try {
       // Remove specific cookies
