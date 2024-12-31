@@ -28,6 +28,22 @@ export type Product = {
   category: Category
 }
 
+export type ProductwithImagesURL = {
+  id: number
+  name: string
+  description: string
+  price: number
+  images: string
+  rating: string
+  stock: number
+  brand_id: number
+  category_id: number
+  createdAt: string
+  updatedAt: string
+  brand: Brand
+  category: Category
+}
+
 export type ProductsResponse = {
   message: string
   products: Product[]

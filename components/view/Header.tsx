@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store/store';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  const TotalCartItems = useSelector((state: RootState) =>state?.cart?.cartItemList?.length)
   const toggleMenu = () => {
     setIsMenuOpen((prev) => !prev);
   };
@@ -30,7 +32,7 @@ const Header = () => {
         <nav className="hidden md:flex space-x-4">
           <ul className="flex space-x-4">
             <li>
-              <Link href="/cart" className="hover:text-gray-400">Cart</Link>
+              <Link href="/cart" className="hover:text-gray-400">Cart ({TotalCartItems ?? 0})</Link>
             </li>
             <li>
               <Link href="/products" className="hover:text-gray-400">Products</Link>
