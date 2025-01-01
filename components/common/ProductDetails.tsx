@@ -123,15 +123,32 @@ const ProductDetails = ({ product, isAdmin = false }: ProductDetailsProps) => {
           </div>
 
           {!isAdmin && (
-            <button
-              className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors w-full md:w-auto"
-              disabled={product?.stock === 0}
-              onClick={() =>{
-                addToCart.mutateAsync({productId: product?.id, quantity: 1})
-              }}
-            >
-              Add to Cart
-            </button>
+            <>
+              <button
+                className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors w-full md:w-auto"
+                disabled={product?.stock === 0}
+                onClick={() => {
+                  addToCart.mutateAsync({
+                    productId: product?.id,
+                    quantity: 1,
+                  });
+                }}
+              >
+                {true ? "Add to Favourites" : "Remove from Favourites"}
+              </button>
+              <button
+                className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors w-full md:w-auto"
+                disabled={product?.stock === 0}
+                onClick={() => {
+                  addToCart.mutateAsync({
+                    productId: product?.id,
+                    quantity: 1,
+                  });
+                }}
+              >
+                Add to Cart
+              </button>
+            </>
           )}
           {isAdmin && (
             <button

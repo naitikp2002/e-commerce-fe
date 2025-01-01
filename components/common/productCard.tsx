@@ -1,7 +1,13 @@
 import Image from "next/image";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
+import { Heart, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: {
@@ -11,6 +17,7 @@ interface ProductCardProps {
     images: string[];
     price: number;
     rating: string;
+    favourite: boolean;
     stock: number;
     brand: {
       id: number;
@@ -41,7 +48,7 @@ export function ProductCard({ product }: ProductCardProps) {
           <h3 className="font-semibold text-lg">{product.name}</h3>
           <Badge variant="secondary">${product.price}</Badge>
         </div>
-        
+
         <div className="flex items-center gap-2 mb-2">
           <Badge variant="outline">{product.category.name}</Badge>
           <Badge variant="outline">{product.brand.name}</Badge>
@@ -56,9 +63,12 @@ export function ProductCard({ product }: ProductCardProps) {
             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
             <span className="text-sm">{product.rating}</span>
           </div>
-          <span className="text-sm text-muted-foreground">
+          <div className="flex gap-2 justify-center items-center">
+          <span className=" text-sm text-muted-foreground">
             Stock: {product.stock}
           </span>
+          {product.favourite && <Heart className="h-4 w-4 fill-red-500 text-red-500" />}
+          </div>
         </div>
       </CardContent>
     </Card>

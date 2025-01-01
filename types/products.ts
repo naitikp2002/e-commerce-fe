@@ -19,6 +19,7 @@ export type Product = {
   price: number
   images: string[]
   rating: string
+  favourite: boolean
   stock: number
   brand_id: number
   category_id: number
