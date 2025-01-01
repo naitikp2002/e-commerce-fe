@@ -24,3 +24,13 @@ export interface CartRedux {
 export interface CartItem {
     id: number;
 }
+
+export interface AddressForm {
+    name: string;
+    email: string;
+    mobile: string;
+    street_address: string;
+    city: string;
+    zip_code: string;
+    country: string;
+  }

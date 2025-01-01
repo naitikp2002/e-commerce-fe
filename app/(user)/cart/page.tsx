@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, Router, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,6 +31,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { setCart } from "@/store/features/cartSlice";
 import { useDispatch } from "react-redux";
+import { useRouter } from "next/navigation";
 // Dummy data for cart items
 // const initialCartItems = [
 //   { id: 1, name: "Product 1", price: 19.99, quantity: 2 },
@@ -39,6 +40,7 @@ import { useDispatch } from "react-redux";
 // ];
 
 export default function CartPage() {
+  const router = useRouter();
   const dispatch = useDispatch();
   const updateCart = useUpdateCartDetails();
   const { data: cartItems, isLoading, isSuccess } = useCartDetails();
@@ -169,8 +171,12 @@ export default function CartPage() {
               <span>Total</span>
               <span>${total?.toFixed(2)}</span>
             </div>
-            <Button className="w-full">Proceed to Checkout</Button>
-            <Button variant="outline" className="w-full">
+            <Button onClick={()=>{
+              router.push('/checkout');
+            }} className="w-full">Proceed to Checkout</Button>
+            <Button onClick={()=>{
+              router.push('/products');
+            }} variant="outline" className="w-full">
               Continue Shopping
             </Button>
           </div>

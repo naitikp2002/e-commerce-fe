@@ -13,10 +13,10 @@ export const cartSlice = createSlice({
   initialState,
   reducers: {
     setCart: (state, action) => {
-      state.cartItemList = action.payload.cartItemList
-      state.subTotal = action.payload.subTotal
-      state.tax = action.payload.tax
-      state.total = action.payload.total
+      state.cartItemList = action.payload?.cartItemList
+      state.subTotal = action.payload?.subTotal
+      state.tax = action.payload?.tax
+      state.total = action.payload?.total
     }
   },
 })
