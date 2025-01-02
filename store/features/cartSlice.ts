@@ -6,6 +6,7 @@ const initialState: CartRedux = {
   subTotal: 0,
   tax: 0,
   total: 0,
+  selectedAddress: null,
 }
 
 export const cartSlice = createSlice({
@@ -17,9 +18,12 @@ export const cartSlice = createSlice({
       state.subTotal = action.payload?.subTotal
       state.tax = action.payload?.tax
       state.total = action.payload?.total
+    },
+    setSelectedAddress: (state, action) => {
+      state.selectedAddress = action.payload
     }
   },
 })
 
-export const { setCart } = cartSlice.actions
+export const { setCart, setSelectedAddress } = cartSlice.actions
 export default cartSlice.reducer

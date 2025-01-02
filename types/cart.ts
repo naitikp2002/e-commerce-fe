@@ -20,6 +20,7 @@ export interface CartRedux {
     subTotal: number | null;
     tax: number | null;
     total: number | null;
+    selectedAddress: number | null;
 }
 export interface CartItem {
     id: number;

@@ -3,6 +3,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CreateAddress from "./createAddress";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedAddress } from "@/store/features/cartSlice";
+import { RootState } from "@/store/store";
 
 interface Address {
   id: string;
@@ -28,15 +31,10 @@ export default function AddressList({
   handleBackFromNewAddress,
   addnNewAddressForm,
 }: AddressListProps) {
-  const [selectedAddress, setSelectedAddress] = useState<string | null>(null);
-
-  const handleSelect = () => {
-    const address = addresses.find((a) => a.id === selectedAddress);
-    if (address) {
-      //   onSelect(address)
-    }
-  };
-
+  const selectedAddress = useSelector(
+    (state: RootState) => state.cart.selectedAddress
+  );
+  const dispatch = useDispatch();
   if (addresses?.length === 0 && !addnNewAddressForm) {
     return (
       <div className="flex flex-col gap-4">
@@ -57,14 +55,17 @@ export default function AddressList({
       {addnNewAddressForm ? (
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Add a New Shipping Address</h3>
-          <CreateAddress handleBackFromNewAddress={handleBackFromNewAddress}/>
+          <CreateAddress handleBackFromNewAddress={handleBackFromNewAddress} />
         </div>
       ) : (
         <>
           <h3 className="text-lg font-semibold">Select an existing address</h3>
           <RadioGroup
-            value={selectedAddress!}
-            onValueChange={setSelectedAddress}
+            defaultValue={selectedAddress?.toString()!}
+            // value={selectedAddress?.toString()!}       
+            onValueChange={(id) => {
+              dispatch(setSelectedAddress(id));
+            }}
           >
             {addresses?.map((address) => (
               <div
@@ -86,13 +87,6 @@ export default function AddressList({
             ))}
           </RadioGroup>
           <div className="flex justify-between">
-            <Button
-              onClick={handleSelect}
-              disabled={!selectedAddress}
-              variant="secondary"
-            >
-              Use Selected Address
-            </Button>
             <Button onClick={handleNewAddress} variant="outline">
               Add New Address
             </Button>

@@ -27,6 +27,10 @@ const CheckoutPage = () => {
       ),
     },
     {
+      title: "Review Order",
+      content: <div className="space-y-4">Hii</div>,
+    },
+    {
       title: "Payment Information",
       content: <div className="space-y-4">Hii</div>,
     },
