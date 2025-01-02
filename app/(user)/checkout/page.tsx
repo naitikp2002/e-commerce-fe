@@ -1,6 +1,8 @@
 "use client";
 import Stepper from "@/components/common/Stepper";
 import AddressList from "@/components/view/addressList";
+import PaymentP from "@/components/view/PaymentP";
+import PaymentPage from "@/components/view/PaymentPage";
 import { useGetAddress } from "@/hooks/queries/use-address";
 import React, { useState } from "react";
 
@@ -32,7 +34,11 @@ const CheckoutPage = () => {
     },
     {
       title: "Payment Information",
-      content: <div className="space-y-4">Hii</div>,
+      content: (
+        <div className="space-y-4">
+          <PaymentP />
+        </div>
+      ),
     },
   ];
 
