@@ -6,28 +6,37 @@ import {
 import React, { useEffect } from "react";
 import { Button } from "../ui/button";
 import axios from "axios";
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
 
 const Checkoutpage = ({ amount }: { amount: number }) => {
   const stripe = useStripe();
   const elements = useElements();
-
+  const cartItems = useSelector(
+    (state: RootState) => state?.cart?.cartItemList
+  );
+  const TotalAmount = useSelector((state: RootState) => state?.cart?.total);
+  const userId = useSelector((state: RootState) => state?.user?.user?.id);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [clientSecret, setClientSecret] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
   useEffect(() => {
-    axios
-      .post("http://localhost:8080/create-checkout-session", {
-        amount: amount * 100,
-      })
-      .then((response) => {
-        console.log(response.data);
-        setClientSecret(response.data.clientSecret);
-      })
-      .catch((error) => {
-        console.error("Error creating checkout session:", error);
-      });
-  }, [amount]);
+    if (TotalAmount && cartItems) {
+      axios
+        .post("http://localhost:8080/create-checkout-session", {
+          amount: (TotalAmount ?? 0) * 100,
+          userId // Pass reduced cartItems to the API
+        })
+        .then((response) => {
+          console.log(response.data);
+          setClientSecret(response.data.clientSecret);
+        })
+        .catch((error) => {
+          console.error("Error creating checkout session:", error);
+        });
+    }
+  }, [TotalAmount, cartItems]); // Add cartItems to the dependency array
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,20 +58,19 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://localhost:3000/payment-success?amount=${amount}`,
+        return_url: `http://localhost:3000/payment-success?amount=${TotalAmount}`,
       },
     });
 
     if (error) {
       setErrorMessage(error.message || "");
-    }
-    else{
-        
+    } else {
+
     }
     setLoading(false);
   };
 
-  if(!clientSecret || !stripe || !elements){
+  if (!clientSecret || !stripe || !elements) {
     return <div>Loading...</div>;
   }
   return (
@@ -77,7 +85,7 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
           className="mt-3 text-white w-full p-5 rounded-md disabled:opacity-50 disabled:animate-pulse"
         >
           {" "}
-          {!loading ? `Pay $${amount} ` : "Processing..."}
+          {!loading ? `Pay $${TotalAmount} ` : "Processing..."}
         </Button>
       </form>
     </div>
