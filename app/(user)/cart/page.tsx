@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Minus, Plus, Router, Trash2 } from "lucide-react";
+import { ArrowRight, Minus, Plus, Router, ShoppingCart, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -30,8 +30,10 @@ import { CartResponse } from "@/types/cart";
 import Link from "next/link";
 import Image from "next/image";
 import { setCart } from "@/store/features/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
+import EmptyCart from "@/components/common/EmptyCart";
+import { RootState } from "@/store/store";
 // Dummy data for cart items
 // const initialCartItems = [
 //   { id: 1, name: "Product 1", price: 19.99, quantity: 2 },
@@ -44,7 +46,7 @@ export default function CartPage() {
   const dispatch = useDispatch();
   const updateCart = useUpdateCartDetails();
   const { data: cartItems, isLoading, isSuccess } = useCartDetails();
-
+  const CartItemsLength = useSelector((state: RootState) =>state?.cart?.cartItemList?.length)
   const subtotal = cartItems?.reduce(
     (sum: number, item: CartResponse) =>
       sum + item?.product?.price * item.quantity,
@@ -76,6 +78,13 @@ export default function CartPage() {
       </div>
     );
   }
+
+  if(isSuccess && cartItems?.length === 0){
+    return (
+      <EmptyCart />
+    );
+  }
+
   return (
     <div className="container mx-auto py-10">
       <Card>

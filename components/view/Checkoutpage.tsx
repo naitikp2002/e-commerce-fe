@@ -16,6 +16,8 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
     (state: RootState) => state?.cart?.cartItemList
   );
   const TotalAmount = useSelector((state: RootState) => state?.cart?.total);
+  const selectedAddress = useSelector((state: RootState) => state?.cart?.selectedAddress);
+
   const userId = useSelector((state: RootState) => state?.user?.user?.id);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [clientSecret, setClientSecret] = React.useState("");
@@ -24,8 +26,9 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
   useEffect(() => {
     if (TotalAmount && cartItems) {
       axios
-        .post("http://localhost:8080/create-checkout-session", {
+        .post("http://localhost:8080/api/payment/create-checkout-session", {
           amount: (TotalAmount ?? 0) * 100,
+          selectedAddress,
           userId // Pass reduced cartItems to the API
         })
         .then((response) => {

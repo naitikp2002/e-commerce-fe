@@ -21,6 +21,7 @@ export interface CartRedux {
     tax: number | null;
     total: number | null;
     selectedAddress: number | null;
+    selectedAddressDetails: AddressForm | null;
 }
 export interface CartItem {
     id: number;

@@ -4,7 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import CreateAddress from "./createAddress";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedAddress } from "@/store/features/cartSlice";
+import { setSelectedAddress, setSelectedAddressDetails } from "@/store/features/cartSlice";
 import { RootState } from "@/store/store";
 
 interface Address {
@@ -35,6 +35,11 @@ export default function AddressList({
     (state: RootState) => state.cart.selectedAddress
   );
   const dispatch = useDispatch();
+
+  const findAddressById = (id: string): Address | undefined => {
+    return addresses.find(address => address.id === id);
+  };
+
   if (addresses?.length === 0 && !addnNewAddressForm) {
     return (
       <div className="flex flex-col gap-4">
@@ -65,6 +70,9 @@ export default function AddressList({
             // value={selectedAddress?.toString()!}       
             onValueChange={(id) => {
               dispatch(setSelectedAddress(id));
+              const selectedAddressDetails = findAddressById(id); 
+              dispatch(setSelectedAddressDetails(selectedAddressDetails));
+
             }}
           >
             {addresses?.map((address) => (

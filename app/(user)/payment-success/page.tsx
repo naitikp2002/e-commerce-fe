@@ -1,3 +1,4 @@
+"use client";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,12 +9,41 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useCreatePayment } from "@/hooks/queries/use-payment";
+import { useCartDetails } from "@/hooks/queries/use-cart";
+import { CartResponse } from "@/types/cart";
+import { useDispatch } from "react-redux";
+import { setCart } from "@/store/features/cartSlice";
 
 export default function OrderConfirmation({
-  searchParams: { amount },
+  searchParams: { amount, payment_intent },
 }: {
-  searchParams: { amount: string };
+  searchParams: { amount: string; payment_intent: string };
 }) {
+  const dispatch = useDispatch();
+  const [dateToday, setDateToday] = useState<string | null>(null);
+  const { isSuccess: createSuccess, data } = useCreatePayment(payment_intent);
+
+  useEffect(() => {
+    setDateToday(new Date().toLocaleDateString());
+    
+    if (createSuccess) {
+      dispatch(
+        setCart({
+          cartItemList: [],
+          total: 0,
+          subTotal: 0,
+          tax: 0,
+        })
+      );
+    }
+  }, [createSuccess]);
+
+  //   if (!amount || !dateToday) {
+  //     return <div>loading...</div>;
+  //   }
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
@@ -39,13 +69,13 @@ export default function OrderConfirmation({
               </li>
               <li className="flex justify-between">
                 <span>Date:</span>
-                <span className="font-medium">
-                  {new Date().toLocaleDateString()}
-                </span>
+                <p className="font-medium">{dateToday}</p>
               </li>
               <li className="flex justify-between">
-                <span>Amount Paid:</span>
-                <span className="font-medium text-green-600">${(Number(amount).toFixed(2))}</span>
+                <p>Amount Paid:</p>
+                <span className="font-medium text-green-600">
+                  ${Number(amount).toFixed(2)}
+                </span>
               </li>
             </ul>
           </div>
