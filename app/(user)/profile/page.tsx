@@ -5,6 +5,7 @@ import React from "react";
 import Cookies from "js-cookie";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
+import OrdersListUser from "@/components/view/OrdersListUser";
 
 const Profile = () => {
   const router = useRouter();
@@ -22,9 +23,11 @@ const Profile = () => {
   };
 
   return (
-    <div className="container mx-auto p-10">
+    <div className="max-w-6xl mx-auto p-10">
       <h1 className="text-3xl font-bold mb-6">Your Profile</h1>
       <ProfileForm />
+      <hr />
+      <OrdersListUser />
       <Button
         variant="ghost"
         className="flex items-center gap-2 justify-center text-red-500 hover:text-red-600 hover:bg-red-50"

@@ -33,6 +33,39 @@ export const useGetAddress = () => {
   });
 };
 
+interface Address {
+  id: number;
+  name: string;
+  email: string;
+  street_address: string;
+  city: string;
+  zip_code: string;
+  country: string;
+}
+
+interface GetAddressByIdResponse {
+  message: string;
+  address: Address;
+}
+
+export const useGetAddressById = (id: number) => {
+  return useQuery<GetAddressByIdResponse, Error>({
+    queryKey: addressKeys.detail(id),
+    queryFn: async (): Promise<GetAddressByIdResponse> => {
+      const token = getToken();
+      const response = await fetch(`http://localhost:8080/api/address/${id}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch address");
+      }
+      return response.json();
+    },
+  });
+};
+
 export const useAddAddress = () => {
   const queryClient = useQueryClient();
 

@@ -28,8 +28,8 @@ export default function Stepper({ steps }: StepperProps) {
             <div key={step.title} className="flex items-center">
               <div className={`p-[20px] rounded-full
                 w-10 h-10 flex items-center justify-center
-                ${index <= currentStep 
-                  ? 'bg-primary text-primary-foreground' 
+                ${index == currentStep ? 'bg-primary text-primary-foreground'
+                  : index < currentStep ? 'bg-green-500 text-primary-foreground' 
                   : 'bg-muted text-muted-foreground'}
                 ${index < currentStep ? 'bg-green-500' : ''}
                 transition-all duration-300 ease-in-out

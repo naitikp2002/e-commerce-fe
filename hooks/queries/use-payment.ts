@@ -14,41 +14,6 @@ export const paymentKeys = {
   detail: (id: number) => [...paymentKeys.details(), id] as const,
 };
 
-// export const useCreatePayment = () => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation({
-//     mutationFn: async ({ ...data }: {paymentIntentId:string}) => {
-//       try {
-//         const response = await apiClient.post(
-//           `http://localhost:8080/api/payment/place-order`,
-//           data,
-//           {
-//             headers: {
-//               "Content-Type": "application/json",
-//               // Authorization: `${getToken()}`,
-//             },
-//           }
-//         );
-//         return response.data;
-//       } catch (error) {
-//         console.error("Payment creation failed", error);
-//         toast.error("Payment creation failed. Please try again.");
-//         throw error;
-//       }
-//     },
-//     onSuccess: (data) => {
-//       // queryClient.invalidateQueries({ queryKey: paymentKeys.detail(data.id) });
-//       queryClient.invalidateQueries({ queryKey: paymentKeys.lists() });
-//       toast.success(data.message);
-//     },
-//     onError: (error) => {
-//       console.error("Payment creation failed", error);
-//       toast.error("Payment creation failed. Please try again.");
-//     },
-//   });
-// };
-
 export const useCreatePayment = (paymentIntentId: string) => {
   return useQuery({
     queryKey: paymentKeys.list(),
@@ -70,22 +35,3 @@ export const useCreatePayment = (paymentIntentId: string) => {
     },
   });
 };
-
-// export const useCreatePayment = (paymentIntentId: string) => {
-//   return useQuery({
-//     queryKey: paymentKeys.list(),
-//     queryFn: async () => {
-//       const response = await fetch(
-//         `http://localhost:8080/api/payment/place-order?paymentIntentId=${paymentIntentId}`,
-//         {}
-//       );
-//       if (!response.ok) {
-//         // throw new Error("Failed to fetch categories")
-//         toast.error("Failed to fetch categories");
-//       } else {
-//         toast.success("Payment successful");
-//       }
-//       return response.json();
-//     },
-//   });
-// };

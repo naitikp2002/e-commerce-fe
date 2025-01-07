@@ -9,6 +9,8 @@ import {
   User,
   LogOut,
   Edit,
+  ListOrdered,
+  LayoutList,
 } from "lucide-react";
 import {
   Collapsible,
@@ -103,6 +105,17 @@ const items = [
       {
         title: "User List",
         url: "/admin/users/list",
+        icon: List,
+      },
+    ],
+  },
+  {
+    title: "Orders",
+    icon: LayoutList ,
+    subItems: [
+      {
+        title: "Order List",
+        url: "/admin/orders/list",
         icon: List,
       },
     ],
