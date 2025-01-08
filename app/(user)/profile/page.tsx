@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import OrdersListUser from "@/components/view/OrdersListUser";
-
+import SaveCardProvider from "@/components/view/SaveCardProvider.tsx";
 const Profile = () => {
   const router = useRouter();
   const handleLogout = () => {
@@ -28,6 +28,7 @@ const Profile = () => {
       <ProfileForm />
       <hr />
       <OrdersListUser />
+      <SaveCardProvider />
       <Button
         variant="ghost"
         className="flex items-center gap-2 justify-center text-red-500 hover:text-red-600 hover:bg-red-50"

@@ -20,4 +20,12 @@ export interface PaymentDetails {
 export interface Card {
   brand: string;
   last4: string;
+  exp_month: number;
+  exp_year: number;
+  display_brand: string;
+}
+
+export interface CardResponse {
+  card: Card;
+  id: number;
 }
