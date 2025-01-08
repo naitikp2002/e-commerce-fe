@@ -16,7 +16,9 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
     (state: RootState) => state?.cart?.cartItemList
   );
   const TotalAmount = useSelector((state: RootState) => state?.cart?.total);
-  const selectedAddress = useSelector((state: RootState) => state?.cart?.selectedAddress);
+  const selectedAddress = useSelector(
+    (state: RootState) => state?.cart?.selectedAddress
+  );
 
   const userId = useSelector((state: RootState) => state?.user?.user?.id);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
@@ -29,7 +31,7 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
         .post("http://localhost:8080/api/payment/create-checkout-session", {
           amount: (TotalAmount ?? 0) * 100,
           selectedAddress,
-          userId // Pass reduced cartItems to the API
+          userId, // Pass reduced cartItems to the API
         })
         .then((response) => {
           console.log(response.data);
@@ -68,7 +70,6 @@ const Checkoutpage = ({ amount }: { amount: number }) => {
     if (error) {
       setErrorMessage(error.message || "");
     } else {
-
     }
     setLoading(false);
   };

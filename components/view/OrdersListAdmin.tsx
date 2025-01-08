@@ -24,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAdminAllOrders } from "@/hooks/queries/use-orders";
 import { format } from "date-fns";
 import { Order } from "@/types/order";
+import { Pagination } from "../ui/pagination";
 
 // Mock data for orders
 const initialOrders = [
@@ -97,6 +98,8 @@ export default function AdminOrdersListTable() {
   };
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    event.preventDefault();
+    setSearch(event.target.value);
     const searchTerm = event.target.value.toLowerCase();
     const filteredOrders = initialOrders.filter(
       (order) =>
@@ -106,7 +109,7 @@ export default function AdminOrdersListTable() {
     );
     setOrders(filteredOrders);
   };
-  if (isLoading) return <div>Loading...</div>;
+  // if (isLoading) return <div>Loading...</div>;
   return (
     <div className="container mx-auto py-10">
       <Card>
@@ -131,7 +134,7 @@ export default function AdminOrdersListTable() {
                   </Button>
                 </TableHead>
                 <TableHead>
-                  <Button variant="ghost" onClick={() => handleSort("date")}>
+                  <Button variant="ghost" onClick={() => handleSort("createdAt")}>
                     Date
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
@@ -139,20 +142,18 @@ export default function AdminOrdersListTable() {
                 <TableHead>
                   <Button
                     variant="ghost"
-                    onClick={() => handleSort("customer")}
                   >
                     Customer
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
                 </TableHead>
                 <TableHead className="text-right">
-                  <Button variant="ghost" onClick={() => handleSort("total")}>
+                  <Button variant="ghost" onClick={() => handleSort("total_amount")}>
                     Total
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
                 </TableHead>
                 <TableHead>
-                  <Button variant="ghost" onClick={() => handleSort("status")}>
+                  <Button variant="ghost" onClick={() => handleSort("payment_status")}>
                     Status
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                   </Button>
@@ -161,64 +162,75 @@ export default function AdminOrdersListTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {ordersList.map((order: Order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
-                  <TableCell>
-                    {order.createdAt &&
-                      format(new Date(order.createdAt), "MMM dd, yyyy")}
-                  </TableCell>
-                  <TableCell>{order.user.name}</TableCell>
-                  <TableCell className="text-right">
-                    ${order.total_amount.toFixed(2)}
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(
-                        order.payment_status
-                      )}`}
-                    >
-                      {order.payment_status}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="h-8 w-8 p-0">
-                          <span className="sr-only">Open menu</span>
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>
-                          <Link
-                            href={`/admin/orders/${order.id}`}
-                            className="flex items-center"
+              {isLoading ? (
+                <div>Loading...</div>
+              ) : (
+                ordersList?.orders.map((order: Order) => (
+                  <TableRow key={order.id}>
+                    <TableCell className="font-medium">{order.id}</TableCell>
+                    <TableCell>
+                      {order.createdAt &&
+                        format(new Date(order.createdAt), "MMM dd, yyyy")}
+                    </TableCell>
+                    <TableCell>{order.user.name}</TableCell>
+                    <TableCell className="text-right">
+                      ${order.total_amount.toFixed(2)}
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(
+                          order.payment_status
+                        )}`}
+                      >
+                        {order.payment_status}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuItem>
+                            <Link
+                              href={`/admin/orders/${order.id}`}
+                              className="flex items-center"
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              View details
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => alert(`Edit order ${order.id}`)}
                           >
-                            <Eye className="mr-2 h-4 w-4" />
-                            View details
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => alert(`Edit order ${order.id}`)}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() => alert(`Cancel order ${order.id}`)}
-                        >
-                          Cancel Order
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </TableCell>
-                </TableRow>
-              ))}
+                            Edit
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() => alert(`Cancel order ${order.id}`)}
+                          >
+                            Cancel Order
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
       </Card>
+      <div className="mt-3 flex justify-center">
+        <Pagination
+          currentPage={ordersList?.currentPage}
+          totalPages={ordersList?.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
+      </div>
     </div>
   );
 }
