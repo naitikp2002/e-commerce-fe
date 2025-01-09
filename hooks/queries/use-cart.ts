@@ -5,6 +5,7 @@ import { getToken } from "@/lib/auth";
 import axios from "axios";
 import { CartPayload } from "@/types/cart";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 // Query keys
 export const cartKeys = {
   all: ["cart"] as const,
@@ -19,16 +20,8 @@ export const useAllCartDetails = () => {
   return useQuery({
     queryKey: cartKeys.list(),
     queryFn: async () => {
-      const token = getToken();
-      const response = await fetch("http://localhost:8080/api/cart/all", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get("/cart/all"); // Using the `api` instance
+      return response.data; // Axios automatically parses JSON
     },
   });
 };
@@ -37,41 +30,50 @@ export const useCartDetails = () => {
   return useQuery({
     queryKey: cartKeys.list(),
     queryFn: async () => {
-      const token = getToken();
-      const response = await fetch("http://localhost:8080/api/cart", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get("/cart"); // Use the axios instance
+      return response.data; // Axios automatically parses JSON
     },
   });
 };
+
+// export const useCartDetails = () => {
+//   return useQuery({
+//     queryKey: cartKeys.list(),
+//     queryFn: async () => {
+//       const token = getToken();
+//       const response = await fetch("http://localhost:8080/api/cart", {
+//         headers: {
+//           Authorization: `${token}`,
+//         },
+//       });
+//       if (!response.ok) {
+//         throw new Error("Failed to fetch categories");
+//       }
+//       return response.json();
+//     },
+//   });
+// };
+
 
 export const useUpdateCartDetails = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ ...data }: CartPayload) => {
-      const response = await apiClient.put(
-        `http://localhost:8080/api/cart`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${getToken()}`,
-          },
-        }
-      );
+    mutationFn: async (data: CartPayload) => {
+      const response = await api.put(`/cart`, data); // `api` handles headers and baseURL
       return response.data;
     },
     onSuccess: (data) => {
+      // Invalidate specific queries
       queryClient.invalidateQueries({ queryKey: cartKeys.detail(data.id) });
-      queryClient.invalidateQueries({ queryKey: cartKeys.lists() });
-      toast.success(data.message)
+      queryClient.invalidateQueries({ queryKey: cartKeys.list() });
+
+      // Notify the user
+      toast.success(data.message || "Cart updated successfully!");
+    },
+    onError: (error) => {
+      console.error("Error updating cart:", error);
+      toast.error("Failed to update cart.");
     },
   });
 };

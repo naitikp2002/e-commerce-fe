@@ -19,7 +19,7 @@ const PaymentP = () => {
           currency: "usd",
         }}
       >
-        <Checkoutpage amount={amount} />
+        <Checkoutpage />
       </Elements>
     </>
   );

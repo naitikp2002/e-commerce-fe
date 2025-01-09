@@ -1,10 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-service";
 import { Brand } from "@/types/products";
 import { getToken } from "@/lib/auth";
 import axios from "axios";
 import { AddressForm, CartPayload } from "@/types/cart";
 import { toast } from "sonner";
+import api from "@/lib/axios";
 // Query keys
 export const addressKeys = {
   all: ["address"] as const,
@@ -71,8 +71,8 @@ export const useAddAddress = () => {
 
   return useMutation({
     mutationFn: async ({ ...data }: AddressForm) => {
-      const response = await apiClient.post(
-        `http://localhost:8080/api/address`,
+      const response = await api.post(
+        `/address`,
         data,
         {
           headers: {
@@ -96,7 +96,7 @@ export const useDeleteBrand = () => {
 
   return useMutation({
     mutationFn: async (id: number) => {
-      await apiClient.delete(`/brands/${id}`);
+      await api.delete(`/brands/${id}`);
       return id;
     },
     onSuccess: () => {

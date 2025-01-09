@@ -4,6 +4,7 @@ import { getToken } from "@/lib/auth";
 import axios from "axios";
 import { CartPayload } from "@/types/cart";
 import { toast } from "sonner";
+import { productKeys } from "./use-products";
 // Query keys
 export const favouritesKeys = {
   all: ["favourites"] as const,
@@ -53,6 +54,8 @@ export const useUpdateFavourites = () => {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: favouritesKeys.detail(data.id) });
       queryClient.invalidateQueries({ queryKey: favouritesKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: productKeys.all });
+
       toast.success(data.message)
     },
   });

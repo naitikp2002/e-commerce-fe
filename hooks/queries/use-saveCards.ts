@@ -46,7 +46,7 @@ export const useAddtoSaveCard = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: cardKey.list() });
+      queryClient.invalidateQueries({ queryKey: cardKey.all });
     },
   });
 };

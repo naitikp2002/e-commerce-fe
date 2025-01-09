@@ -4,6 +4,7 @@ import { Product } from "@/types/products";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUpdateCartDetails } from "@/hooks/queries/use-cart";
+import { useUpdateFavourites } from "@/hooks/queries/use-favourites";
 
 interface ProductDetailsProps {
   product: {
@@ -14,6 +15,7 @@ interface ProductDetailsProps {
     price: number;
     rating: string;
     stock: number;
+    favourite: boolean;
     brand: {
       id: number;
       name: string;
@@ -30,6 +32,7 @@ const ProductDetails = ({ product, isAdmin = false }: ProductDetailsProps) => {
   const [selectedImage, setSelectedImage] = useState(product?.images?.[0]);
   const router = useRouter();
   const addToCart = useUpdateCartDetails();
+  const toggleFavourites= useUpdateFavourites();
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -128,13 +131,13 @@ const ProductDetails = ({ product, isAdmin = false }: ProductDetailsProps) => {
                 className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors w-full md:w-auto"
                 disabled={product?.stock === 0}
                 onClick={() => {
-                  addToCart.mutateAsync({
+                  toggleFavourites.mutateAsync({
                     productId: product?.id,
                     quantity: 1,
                   });
                 }}
               >
-                {true ? "Add to Favourites" : "Remove from Favourites"}
+                {!product?.favourite ? "Add to Favourites" : "Remove from Favourites"}
               </button>
               <button
                 className="bg-blue-600 text-white py-2 px-6 rounded-md hover:bg-blue-700 transition-colors w-full md:w-auto"

@@ -82,10 +82,10 @@ export default function OrderConfirmation({
         </CardContent>
         <CardFooter className="flex justify-center space-x-4">
           <Button asChild>
-            <Link href="/dashboard">Go to Dashboard</Link>
+            <Link href="/products">Go to Dashboard</Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/orders">View Orders</Link>
+            <Link href="/profile">View Orders</Link>
           </Button>
         </CardFooter>
       </Card>

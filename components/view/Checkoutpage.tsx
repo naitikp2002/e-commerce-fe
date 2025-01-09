@@ -26,7 +26,7 @@ import { useGetSavedCards } from "@/hooks/queries/use-saveCards";
 import { toast } from "sonner";
 import { usePaymentBySavedCard } from "@/hooks/queries/use-payment";
 
-const Checkoutpage = ({ amount }: { amount: number }) => {
+const Checkoutpage = () => {
   const stripe = useStripe();
   const elements = useElements();
   const cartItems = useSelector(
