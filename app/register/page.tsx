@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,31 +11,51 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 // import { toast } from "@/hooks/use-toast"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { useMutation } from "@tanstack/react-query"
-import Link from "next/link"
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
 
 // Define the form validation schema
+
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   email: z.string().email("Invalid email address"),
   mobile: z.string().min(10, "Mobile number must be at least 10 digits"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  image: z.instanceof(FileList).transform(list => list.item(0)),
-})
+  image: z
+    .any() // Temporarily accept any type during SSR or build process
+    .refine(
+      (value) => {
+        // Only validate FileList when we're in the browser
+        if (typeof window !== "undefined") {
+          return value instanceof FileList;
+        }
+        return true; // Skip validation during SSR
+      },
+      {
+        message: "Image must be a valid file list",
+      }
+    )
+    .transform((list) => {
+      if (list instanceof FileList) {
+        return list.item(0); // Get the first file if it's a FileList
+      }
+      return null; // Return null if not a FileList
+    }),
+});
 
 // Add this type for the registration response
 type RegisterResponse = {
   // Add your expected response type here
-  message: string
-}
+  message: string;
+};
 
 export default function RegisterPage() {
-    const router = useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -44,18 +64,22 @@ export default function RegisterPage() {
       mobile: "",
       password: "",
     },
-  })
+  });
 
   // Replace the direct fetch with useMutation
-  const { mutate: registerUser, isPending, isError } = useMutation({
+  const {
+    mutate: registerUser,
+    isPending,
+    isError,
+  } = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      const formData = new FormData()
-      formData.append('name', values.name)
-      formData.append('email', values.email)
-      formData.append('mobile', values.mobile)
-      formData.append('password', values.password)
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("mobile", values.mobile);
+      formData.append("password", values.password);
       if (values.image) {
-        formData.append('image', values.image)
+        formData.append("image", values.image);
       }
 
       const response = await fetch("http://localhost:8080/api/auth/register", {
@@ -64,26 +88,26 @@ export default function RegisterPage() {
         //   "Content-Type": "multipart/form-data",
         // },
         body: formData,
-      })
-      
+      });
+
       if (!response.ok) {
-        throw new Error("Registration failed")
+        throw new Error("Registration failed");
       }
-      
-      return response.json()
+
+      return response.json();
     },
     onSuccess: () => {
-      toast.success("Registration successful")
-      router.push('/login')
+      toast.success("Registration successful");
+      router.push("/login");
     },
     onError: () => {
-      toast.error("Something went wrong. Please try again.")
+      toast.error("Something went wrong. Please try again.");
     },
-  })
+  });
 
   // Update the onSubmit function to use the mutation
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    registerUser(values)
+    registerUser(values);
   }
 
   return (
@@ -117,7 +141,11 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your email" type="email" {...field} />
+                    <Input
+                      placeholder="Enter your email"
+                      type="email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,7 +173,11 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter your password" type="password" {...field} />
+                    <Input
+                      placeholder="Enter your password"
+                      type="password"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,13 +191,13 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Profile Image</FormLabel>
                   <FormControl>
-                    <Input 
-                      type="file" 
+                    <Input
+                      type="file"
                       accept="image/*"
                       onChange={(e) => {
-                        const files = e.target.files
+                        const files = e.target.files;
                         if (files?.length) {
-                          onChange(files)
+                          onChange(files);
                         }
                       }}
                       {...field}
@@ -181,10 +213,10 @@ export default function RegisterPage() {
             </Button>
           </form>
         </Form>
-          <div className="flex justify-center mt-2">
-            <Link href="/login">Already have an account? Sign in</Link>
-          </div>
+        <div className="flex justify-center mt-2">
+          <Link href="/login">Already have an account? Sign in</Link>
+        </div>
       </div>
     </div>
-  )
+  );
 }

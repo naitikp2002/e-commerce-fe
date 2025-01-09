@@ -25,7 +25,7 @@ const EmptyCart = () => {
         </CardHeader>
         <CardContent>
           <p className="text-center text-gray-600 mb-6">
-            Looks like you haven't added any products to your cart yet.
+            Looks like you haven&apos;t added any products to your cart yet.
           </p>
           <div className="bg-gray-100 p-4 rounded-lg text-sm text-gray-700">
             <h3 className="font-semibold mb-2">Quick Tips:</h3>

@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import OrdersListUser from "@/components/view/OrdersListUser";
-import SaveCardProvider from "@/components/view/SaveCardProvider.tsx";
+import SaveCardProvider from "@/components/view/SaveCardProvider";
 const Profile = () => {
   const router = useRouter();
   const handleLogout = () => {
