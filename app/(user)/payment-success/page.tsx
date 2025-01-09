@@ -27,7 +27,7 @@ export default function OrderConfirmation({
 
   useEffect(() => {
     setDateToday(new Date().toLocaleDateString());
-    
+
     if (createSuccess) {
       dispatch(
         setCart({
@@ -57,7 +57,7 @@ export default function OrderConfirmation({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-center text-gray-600">
-            Thank you for your order. We've received your payment and are
+            Thank you for your order. We&apos;ve received your payment and are
             processing your order.
           </p>
           <div className="bg-gray-50 p-4 rounded-lg">

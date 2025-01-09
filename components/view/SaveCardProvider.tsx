@@ -42,14 +42,14 @@ export default function SaveCardProvider() {
   return (
     <>
       <Elements stripe={stripe}>
-        <div className="flex gap-3">
-          <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="md:flex gap-3 sm:block">
+          <div className="sm:mx-auto sm:w-full sm:max-w-md">
             <Elements stripe={stripe}>
               <StripeCardForm />
             </Elements>
           </div>
 
-          <Card className="w-full max-w-md mx-auto">
+          <Card className="w-full mx-auto">
             <CardHeader>
               <CardTitle>Saved Payment Methods</CardTitle>
             </CardHeader>
