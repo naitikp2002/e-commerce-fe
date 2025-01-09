@@ -5,6 +5,7 @@ import axios from "axios";
 import { CartPayload } from "@/types/cart";
 import { toast } from "sonner";
 import { productKeys } from "./use-products";
+import api from "@/lib/axios";
 // Query keys
 export const favouritesKeys = {
   all: ["favourites"] as const,
@@ -20,34 +21,21 @@ export const useFavouritesProducts = () => {
   return useQuery({
     queryKey: favouritesKeys.list(),
     queryFn: async () => {
-      const token = getToken();
-      const response = await fetch("http://localhost:8080/api/favourites", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get("/favourites"); // Using the `api` instance
+      return response.data; // Axios handles JSON parsing
     },
   });
 };
+
 
 export const useUpdateFavourites = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ ...data }: CartPayload) => {
-      const response = await apiClient.put(
-        `http://localhost:8080/api/favourites`,
+      const response = await api.put(
+        `/favourites`,
         data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${getToken()}`,
-          },
-        }
       );
       return response.data;
     },

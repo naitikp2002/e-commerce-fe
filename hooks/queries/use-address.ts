@@ -19,19 +19,12 @@ export const useGetAddress = () => {
   return useQuery({
     queryKey: addressKeys.list(),
     queryFn: async () => {
-      const token = getToken();
-      const response = await fetch("http://localhost:8080/api/address", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get("/address"); // Using the `api` instance
+      return response.data; // Axios handles JSON parsing
     },
   });
 };
+
 
 interface Address {
   id: number;
@@ -52,16 +45,8 @@ export const useGetAddressById = (id: number) => {
   return useQuery<GetAddressByIdResponse, Error>({
     queryKey: addressKeys.detail(id),
     queryFn: async (): Promise<GetAddressByIdResponse> => {
-      const token = getToken();
-      const response = await fetch(`http://localhost:8080/api/address/${id}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch address");
-      }
-      return response.json();
+      const response = await api.get(`/address/${id}`); // Use the `api` instance
+      return response.data; // Axios automatically parses JSON
     },
   });
 };
@@ -71,16 +56,7 @@ export const useAddAddress = () => {
 
   return useMutation({
     mutationFn: async ({ ...data }: AddressForm) => {
-      const response = await api.post(
-        `/address`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `${getToken()}`,
-          },
-        }
-      );
+      const response = await api.post(`/address`, data);
       return response.data;
     },
     onSuccess: (data) => {

@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-service";
 import { User } from "@/types/users";
 import { getToken } from "@/lib/auth";
+import api from "@/lib/axios";
 
 const userKeys = {
   all: ["users"] as const,
@@ -14,14 +15,11 @@ export const useUsers = (page: number, pageSize: number) => {
   return useQuery({
     queryKey: userKeys.list(page, pageSize),
     queryFn: () =>
-      apiClient.get(
-        `http://localhost:8080/api/users/all?page=${page}&limit=${pageSize}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      ),
+      api.get(`/users/all?page=${page}&limit=${pageSize}`, {
+        headers: {
+          Authorization: token,
+        },
+      }),
   });
 };
 
@@ -30,7 +28,7 @@ export const useUserDetails = (id: number) => {
   return useQuery({
     queryKey: userKeys.details(id),
     queryFn: () =>
-      apiClient.get(`http://localhost:8080/api/users/${id}`, {
+      api.get(`/users/${id}`, {
         headers: {
           Authorization: token,
         },

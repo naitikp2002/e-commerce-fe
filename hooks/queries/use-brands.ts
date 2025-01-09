@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-service";
 import { Brand } from "@/types/products";
 import { getToken } from "@/lib/auth";
 import axios from "axios";
+import api from "@/lib/axios";
 
 // Query keys
 export const brandKeys = {
@@ -18,19 +18,13 @@ export const useBrands = (filters?: string) => {
   return useQuery({
     queryKey: brandKeys.list(filters ?? ""),
     queryFn: async () => {
-      const token = getToken()
-      const response = await fetch("http://localhost:8080/api/brands/all", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      })
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories")
-      }
-      return response.json()
+      const response = await api.get(
+        `/brands/all${filters ? `?${filters}` : ""}`
+      ); // Using the `api` instance
+      return response.data; // Axios handles JSON parsing
     },
-  })
-}
+  });
+};
 
 // Mutations
 export const useCreateBrand = () => {
@@ -41,11 +35,7 @@ export const useCreateBrand = () => {
       newBrand: Omit<Brand, "id" | "createdAt" | "updatedAt">
     ) => {
       const token = getToken();
-      const { data } = await apiClient.post("http://localhost:8080/api/brands/add", newBrand, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      const { data } = await api.post("/brands/add", newBrand);
       return data;
     },
     onSuccess: () => {
@@ -59,7 +49,7 @@ export const useUpdateBrand = () => {
 
   return useMutation({
     mutationFn: async ({ id, ...data }: Brand) => {
-      const response = await apiClient.put(`http://localhost:8080/api/brands/${id}`, data);
+      const response = await api.put(`/brands/${id}`, data);
       return response.data;
     },
     onSuccess: (data) => {
@@ -70,19 +60,18 @@ export const useUpdateBrand = () => {
 };
 
 export const useDeleteBrand = () => {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (id: number) => {
-      await apiClient.delete(`/brands/${id}`)
-      return id
+      await api.delete(`/brands/${id}`);
+      return id;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: brandKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: brandKeys.lists() });
     },
-  })
-}
-
+  });
+};
 
 // export const useBrands = () => {
 //   return useQuery({
@@ -119,7 +108,9 @@ export const useBrand = (id: number) => {
   return useQuery({
     queryKey: brandKeys.detail(id),
     queryFn: async () => {
-      const { data } = await apiClient.get(`http://localhost:8080/api/brands/${id}`);
+      const { data } = await api.get(
+        `/api/brands/${id}`
+      );
       return data as Brand;
     },
   });

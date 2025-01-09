@@ -1,11 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-service";
 import {
   Product,
   ProductsResponse,
   ProductDetailsResponse,
 } from "@/types/products";
 import { getToken } from "@/lib/auth";
+import api from "@/lib/axios";
 
 // Query keys
 export const productKeys = {
@@ -24,51 +24,51 @@ export const useUserProducts = (
   brandFilter: number[] | null = null,
   priceRange: [number, number] | null = null,
   ratings: number | null = null,
-  searchTerm: string = "",
+  searchTerm: string = ""
 ) => {
   return useQuery({
-    queryKey: ['products', page, categoryFilter, brandFilter, searchTerm, priceRange, ratings],
+    queryKey: [
+      "products",
+      page,
+      categoryFilter,
+      brandFilter,
+      searchTerm,
+      priceRange,
+      ratings,
+    ],
     queryFn: async () => {
       const token = getToken();
       const queryParams = new URLSearchParams();
 
-      queryParams.append('page', page.toString());
-      queryParams.append('limit', limit.toString());
+      queryParams.append("page", page.toString());
+      queryParams.append("limit", limit.toString());
 
       if (categoryFilter && categoryFilter.length > 0) {
-        queryParams.append('category_id', categoryFilter.join(','));
+        queryParams.append("category_id", categoryFilter.join(","));
       }
 
       if (brandFilter && brandFilter.length > 0) {
-        queryParams.append('brand_id', brandFilter.join(','));
+        queryParams.append("brand_id", brandFilter.join(","));
       }
 
       if (priceRange) {
-        queryParams.append('price_range', priceRange.join(','));
+        queryParams.append("price_range", priceRange.join(","));
       }
 
       if (ratings) {
-        queryParams.append('ratings', ratings.toString());
+        queryParams.append("ratings", ratings.toString());
       }
 
       if (searchTerm) {
-        queryParams.append('search', searchTerm);
+        queryParams.append("search", searchTerm);
       }
 
-      const response = await fetch(`http://localhost:8080/api/products/all?${queryParams.toString()}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      const response = await api.get(`/products/all?${queryParams.toString()}`);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
+      return response.data;
     },
   });
 };
-
 
 export const useProducts = (
   page = 1,
@@ -78,7 +78,7 @@ export const useProducts = (
   searchTerm: string = ""
 ) => {
   return useQuery({
-    queryKey: ['products', page, categoryFilter, brandFilter, searchTerm],
+    queryKey: ["products", page, categoryFilter, brandFilter, searchTerm],
     queryFn: async () => {
       const token = getToken();
       const queryParams = new URLSearchParams({
@@ -89,35 +89,26 @@ export const useProducts = (
         ...(searchTerm && { search: searchTerm }),
       });
 
-      const response = await fetch(`http://localhost:8080/api/products/all?${queryParams.toString()}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      const response = await api.get(`/products/all?${queryParams.toString()}`);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
+      return response.data;
     },
   });
 };
 
 export const useProduct = (id: number) => {
-  return useQuery({
+  return useQuery<ProductDetailsResponse, Error>({
     queryKey: productKeys.detail(id),
     queryFn: async () => {
       const token = getToken();
-      const response = await fetch(`http://localhost:8080/api/products/${id}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
+
+      try {
+        const response = await api.get(`/products/${id}`);
+
+        return response.data;
+      } catch (error) {
         throw new Error("Failed to fetch product");
       }
-      const data = await response.json();
-      return data as ProductDetailsResponse;
     },
   });
 };
@@ -129,12 +120,7 @@ export const useCreateProduct = () => {
   return useMutation({
     mutationFn: async (formData: FormData) => {
       const token = getToken();
-      const { data } = await apiClient.post("/products/add", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `${token}`,
-        },
-      });
+      const { data } = await api.post("/products/add", formData);
       return data;
     },
     onSuccess: () => {
@@ -149,12 +135,7 @@ export const useUpdateProduct = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: FormData }) => {
       const token = getToken();
-      const response = await apiClient.put(`/products/${id}`, data, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `${token}`,
-        },
-      });
+      const response = await api.put(`/products/${id}`, data);
       return response.data;
     },
     onSuccess: (data) => {
@@ -170,11 +151,7 @@ export const useDeleteProduct = () => {
   return useMutation({
     mutationFn: async (id: number) => {
       const token = getToken();
-      await apiClient.delete(`/products/${id}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
+      await api.delete(`/products/${id}`);
       return id;
     },
     onSuccess: () => {

@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiClient } from "@/lib/api-service";
 import { Brand } from "@/types/products";
 import { getToken } from "@/lib/auth";
 import axios from "axios";
@@ -83,7 +82,7 @@ export const useDeleteBrand = () => {
 
   return useMutation({
     mutationFn: async (id: number) => {
-      await apiClient.delete(`/brands/${id}`);
+      await api.delete(`/brands/${id}`);
       return id;
     },
     onSuccess: () => {
@@ -92,14 +91,3 @@ export const useDeleteBrand = () => {
   });
 };
 
-export const useBrand = (id: number) => {
-  return useQuery({
-    queryKey: cartKeys.detail(id),
-    queryFn: async () => {
-      const { data } = await apiClient.get(
-        `http://localhost:8080/api/brands/${id}`
-      );
-      return data as Brand;
-    },
-  });
-};

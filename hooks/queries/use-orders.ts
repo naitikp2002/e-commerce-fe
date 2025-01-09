@@ -3,6 +3,7 @@ import { apiClient } from "@/lib/api-service";
 import { Brand } from "@/types/products";
 import { getToken } from "@/lib/auth";
 import axios from "axios";
+import api from "@/lib/axios";
 
 // Query keys
 export const orderKeys = {
@@ -18,16 +19,8 @@ export const useAllOrders = (filters?: string) => {
   return useQuery({
     queryKey: orderKeys.list(filters ?? ""),
     queryFn: async () => {
-      const token = getToken();
-      const response = await fetch("http://localhost:8080/api/orders/all", {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get(`/orders/all}`); // Using the `api` instance
+      return response.data; // Axios automatically handles JSON parsing
     },
   });
 };
@@ -42,35 +35,18 @@ export const useAdminAllOrders = (
   return useQuery({
     queryKey: ["orders", page, limit, sortTerm, sortDirection, searchTerm],
     queryFn: async () => {
-      const token = getToken();
       const queryParams = new URLSearchParams();
 
       queryParams.append("page", page.toString());
       queryParams.append("limit", limit.toString());
+      if (sortTerm) queryParams.append("sort_term", sortTerm);
+      if (sortDirection) queryParams.append("direction", sortDirection);
+      if (searchTerm) queryParams.append("search", searchTerm);
 
-      if (sortTerm) {
-        queryParams.append("sort_term", sortTerm);
-      }
-
-      if (sortDirection) {
-        queryParams.append("direction", sortDirection);
-      }
-  
-      if (searchTerm) {
-        queryParams.append("search", searchTerm);
-      }
-      const response = await fetch(
-        `http://localhost:8080/api/orders/admin/all?${queryParams.toString()}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get(
+        `/orders/admin/all?${queryParams.toString()}`
+      ); // Using the `api` instance
+      return response.data; // Axios parses the JSON automatically
     },
   });
 };
@@ -79,17 +55,8 @@ export const useOrders = (id?: string) => {
   return useQuery({
     queryKey: orderKeys.list(id ?? ""),
     queryFn: async () => {
-      const token = getToken();
-
-      const response = await fetch(`http://localhost:8080/api/orders/${id}`, {
-        headers: {
-          Authorization: `${token}`,
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get(`/orders/${id ?? ""}`); // Using the `api` instance
+      return response.data; // Axios parses JSON automatically
     },
   });
 };
@@ -98,33 +65,19 @@ export const useGetOrdersDetails = (id?: string) => {
   return useQuery({
     queryKey: orderKeys.list(id ?? ""),
     queryFn: async () => {
-      const token = getToken();
-
-      const response = await fetch(
-        `http://localhost:8080/api/order-details/${id}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch categories");
-      }
-      return response.json();
+      const response = await api.get(`/order-details/${id ?? ""}`); // Using the `api` instance
+      return response.data; // Axios automatically parses JSON
     },
   });
 };
+
 
 export const useUpdateBrand = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ id, ...data }: Brand) => {
-      const response = await apiClient.put(
-        `http://localhost:8080/api/brands/${id}`,
-        data
-      );
+      const response = await api.put(`/brands/${id}`, data);
       return response.data;
     },
     onSuccess: (data) => {
